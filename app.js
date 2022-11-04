@@ -6,6 +6,18 @@ const mongoose = require("mongoose");
 
 mongoose.connect("mongodb://127.0.0.1:27017/blogDB", {useNewUrlParser: true});
 
+const conn = mongoose.connection;
+
+conn.on("connected", () => {
+  console.log("Connected to DB succesfully");
+});
+
+conn.on("disconnected", () => {
+  console.log("Unable to connect to DB");
+});
+
+conn.on("error", console.error.bind(console, 'connection error:'));
+
 const blogSchema = new mongoose.Schema({
   title: String,
   content: String
