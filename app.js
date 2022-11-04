@@ -1,12 +1,10 @@
-//jshint esversion:6
-
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const _ = require("lodash");
 const mongoose = require("mongoose");
 
-mongoose.connect("mongodb://localhost:27017/blogDB", {useNewUrlParser: true});
+mongoose.connect("mongodb://127.0.0.1:27017/blogDB", {useNewUrlParser: true});
 
 const blogSchema = new mongoose.Schema({
   title: String,
@@ -20,7 +18,6 @@ const aboutContent = "Hac habitasse platea dictumst vestibulum rhoncus est pelle
 const contactContent = "Scelerisque eleifend donec pretium vulputate sapien. Rhoncus urna neque viverra justo nec ultrices. Arcu dui vivamus arcu felis bibendum. Consectetur adipiscing elit duis tristique. Risus viverra adipiscing at in tellus integer feugiat. Sapien nec sagittis aliquam malesuada bibendum arcu vitae. Consequat interdum varius sit amet mattis. Iaculis nunc sed augue lacus. Interdum posuere lorem ipsum dolor sit amet consectetur adipiscing elit. Pulvinar elementum integer enim neque. Ultrices gravida dictum fusce ut placerat orci nulla. Mauris in aliquam sem fringilla ut morbi tincidunt. Tortor posuere ac ut consequat semper viverra nam libero.";
 
 const app = express();
-//let posts = [];
 
 app.set('view engine', 'ejs');
 
@@ -28,7 +25,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
 app.get("/", function(req, res){
-  Blog.find({}, function(err, posts){
+  Blog.find().sort({title: 1}).exec(function(err, posts){
     res.render("home", {homeContent: homeStartingContent, posts: posts});
   });
 });
@@ -36,12 +33,6 @@ app.get("/", function(req, res){
 app.get("/posts/:testing", function(req, res){
   Blog.findOne({_id: req.params.testing}, function(err, post){
     res.render("post", {postTitle: post.title, postBody: post.content});
-  // post.forEach(function(post){
-  //   if(_.lowerCase(post.title) === _.lowerCase(req.params.testing)){
-  //     res.render("post", {postTitle: post.title, postBody: post.content});
-  //   }
-  // });
-  // res.redirect("/");   , link: "/posts/post.title"
   });
 });
 
@@ -79,7 +70,6 @@ app.post("/compose", function(req, res){
       res.redirect("/");
     }
   });
-  // posts.push(post);
 });
 
 app.listen(3000, function() {
